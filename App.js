@@ -16,14 +16,14 @@ export default function App() {
   const [pressed, setPressed] = useState(false)
 
   const [name, setName] = useState('')
-  const [number, setNumber] = useState(0)
+  const [number, setNumber] = useState(null)
   const [email, setEmail] = useState('')
 
   const [contacts, setContacts] = useState([
-    { id: 1, name: 'Jane Doe', number: '070 123 45 67', email: 'jane.doe@somemail.com', picture: require('./assets/images/michael-dam-mEZ3PoFGs_k-unsplash.jpg'), displayContent: false, favorite: false },
-    { id: 2, name: 'John Doe', number: '070 123 45 67', email: 'john.doe@somemail.com', picture: require('./assets/images/sohaib-al-kharsa-agQ0G6djwU4-unsplash.jpg'), displayContent: false, favorite: false },
+    { id: 1, name: 'Jane Doe', number: '070 123 45 67', email: 'jane.doe@somemail.com', picture: require('./assets/images/michael-dam-mEZ3PoFGs_k-unsplash.jpg'), displayContent: false, favorite: true },
+    { id: 2, name: 'John Doe', number: '070 123 45 67', email: 'john.doe@somemail.com', picture: require('./assets/images/sohaib-al-kharsa-agQ0G6djwU4-unsplash.jpg'), displayContent: false, favorite: true },
     { id: 3, name: 'Jamal Doe', number: '070 123 45 67', email: 'jamal.doe@somemail.com', picture: require('./assets/images/gift-habeshaw-KBv5dEN3QtY-unsplash.jpg'), displayContent: false, favorite: false },
-    { id: 4, name: 'Jennifer Doe', number: '070 123 45 67', email: 'jennifer.doe@somemail.com', picture: require('./assets/images/kevin-hellhake-7BbHyuAf1sg-unsplash.jpg'), displayContent: false,favorite: false },
+    { id: 4, name: 'Jennifer Doe', number: '070 123 45 67', email: 'jennifer.doe@somemail.com', picture: require('./assets/images/kevin-hellhake-7BbHyuAf1sg-unsplash.jpg'), displayContent: false, favorite: false },
     { id: 5, name: 'Janne Doe', number: '070 123 45 67', email: 'janne.doe@somemail.com', picture: require('./assets/images/vince-fleming-j3lf-Jn6deo-unsplash.jpg'), displayContent: false, favorite: false },
     { id: 6, name: 'Juna Doe', number: '070 123 45 67', email: 'juna.doe@somemail.com', picture: require('./assets/images/le-minh-phuong-jGZITdFhmts-unsplash.jpg'), displayContent: false, favorite: false },
   ])
@@ -57,19 +57,30 @@ export default function App() {
   }
 
   const addFunction = () => {
-    
-    setContacts(current => [
-      ...current,
-      {
-      id: 8, 
-      name: name, 
-      number: `${number}`, 
-      email: `${email}`, 
-      picture: null, 
-      displayContent: false, 
-      favorite: false} ])
 
-      setPressed(false) 
+    const createNewId = () => {
+      let id = Math.floor(Math.random() * (1000 - 1) + 1);
+
+      while (contacts.some(contact => contact.id === id)) {
+        id++;
+      }
+      return id;
+    }
+
+    contacts.push({
+      id: createNewId(),
+      name: name,
+      number: number,
+      email: email,
+      picture: null,
+      displayContent: false,
+      favorite: false
+    })
+    setPressed(false)
+  }
+
+  const updateFunction = (id) => {
+
   }
 
   const deleterFunction = (id) => {
@@ -122,7 +133,7 @@ export default function App() {
                       <TextInput
                         style={styles.input}
                         placeholder='Jane Doe'
-                        onChange={(value) => setName(value)}></TextInput>
+                        onChangeText={(value) => setName(value)}></TextInput>
                     </View>
                     <View style={styles.inputWrapper}>
                       <Text style={styles.text}>Telefon:</Text>
@@ -130,17 +141,22 @@ export default function App() {
                         style={styles.input}
                         placeholder='070 123 45 67'
                         keyboardType='numeric'
-                        onChange={(value) => setNumber(value)}></TextInput>
+                        onChangeText={(value) => setNumber(value)}></TextInput>
                     </View>
                     <View style={styles.inputWrapper}>
                       <Text style={styles.text}>Email:</Text>
-                      <TextInput style={styles.input} placeholder='jane.doe@somemail.com' onChange={(value) => setEmail(value)}></TextInput>
+                      <TextInput style={styles.input} placeholder='jane.doe@somemail.com' onChangeText={(value) => setEmail(value)}></TextInput>
                     </View>
                   </View>
                 </View>
-                <TouchableOpacity style={styles.button} onPress={() => addFunction()}>
-                  <Text style={styles.addButtonText}>Lägg till</Text>
-                </TouchableOpacity>
+                <View style={styles.buttonWrapper}>
+                  <TouchableOpacity style={styles.button} onPress={() => addFunction()}>
+                    <Text style={styles.addButtonText}>Lägg till</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.button} onPress={() => setPressed(false)}>
+                    <Text style={styles.addButtonText}>Avbryt</Text>
+                  </TouchableOpacity>
+                </View>
               </View>}
             <View style={styles.wrapper2}>
               <Text style={styles.h2}>Favoriter</Text>
@@ -148,44 +164,44 @@ export default function App() {
                 data={contacts}
                 renderItem={({ item }) => (
                   item.favorite
-                  ? <TouchableOpacity    
-                    onPress={() => toggleContent(item.id)}>
-                    <View style={styles.section2}>
-                      {
-                        item.displayContent
-                          ? <View style={styles.article}>
-                            {item.picture
-                              ? <Image
-                                source={item.picture}
-                                style={styles.picture}
-                              ></Image>
-                              : <FontAwesome name="user-circle-o" size={100} color="black" />}
-                            <View>
-                              <Text style={styles.text}>{item.name}</Text>
+                    ? <TouchableOpacity
+                      onPress={() => toggleContent(item.id)}>
+                      <View style={styles.section2}>
+                        {
+                          item.displayContent
+                            ? <View style={styles.article}>
+                              {item.picture
+                                ? <Image
+                                  source={item.picture}
+                                  style={styles.picture}
+                                ></Image>
+                                : <FontAwesome name="user-circle-o" size={100} color="black" />}
                               <View>
-                                <Text style={styles.text}>{item.number}</Text>
+                                <Text style={styles.text}>{item.name}</Text>
+                                <View>
+                                  <Text style={styles.text}>{item.number}</Text>
+                                </View>
+                                <View >
+                                  <Text style={styles.text}>{item.email}</Text>
+                                </View>
                               </View>
-                              <View >
-                                <Text style={styles.text}>{item.email}</Text>
+                              <View style={styles.iconWrapper}>
+                                <Pressable onPress={() => toggleFavorite(item.id)}>
+                                  <Ionicons name="star-sharp" size={24} color="black" />
+                                </Pressable>
+                                <Pressable onPress={() => updateFunction(item.id)}>
+                                  <FontAwesome5 name="pencil-alt" size={20} color="black" />
+                                </Pressable>
+                                <Pressable onPress={() => deleterFunction(item.id)}>
+                                  <FontAwesome name="trash-o" size={24} color="black" />
+                                </Pressable>
                               </View>
                             </View>
-                            <View style={styles.iconWrapper}>
-                              <Pressable onPress={() => toggleFavorite(item.id)}>
-                              <Ionicons name="star-sharp" size={24} color="black" />
-                              </Pressable>
-                              <Pressable onPress={() => Alert.alert('Funkar tyvärr inte ännu!')}>
-                                <FontAwesome5 name="pencil-alt" size={20} color="black" />
-                              </Pressable>
-                              <Pressable onPress={() => deleterFunction(item.id)}>
-                                <FontAwesome name="trash-o" size={24} color="black" />
-                              </Pressable>
-                            </View>
-                          </View>
-                          : <Text style={styles.text}>{item.name}</Text>
-                      }
-                    </View>
-                  </TouchableOpacity>
-                  : null
+                            : <Text style={styles.text}>{item.name}</Text>
+                        }
+                      </View>
+                    </TouchableOpacity>
+                    : null
                 )}
               >
               </FlatList>
@@ -197,44 +213,44 @@ export default function App() {
                 style={styles.list}
                 renderItem={({ item }) => (
                   !item.favorite
-                  ? <TouchableOpacity   
-                    onPress={() => toggleContent(item.id)}>
-                    <View style={styles.section2}>
-                      {
-                        item.displayContent
-                          ? <View style={styles.article}>
-                            {item.picture
-                              ? <Image
-                                source={item.picture}
-                                style={styles.picture}
-                              ></Image>
-                              : <FontAwesome name="user-circle-o" size={100} color="black" />}
-                            <View>
-                              <Text style={styles.text}>{item.name}</Text>
+                    ? <TouchableOpacity
+                      onPress={() => toggleContent(item.id)}>
+                      <View style={styles.section2}>
+                        {
+                          item.displayContent
+                            ? <View style={styles.article}>
+                              {item.picture
+                                ? <Image
+                                  source={item.picture}
+                                  style={styles.picture}
+                                ></Image>
+                                : <FontAwesome name="user-circle-o" size={100} color="black" />}
                               <View>
-                                <Text style={styles.text}>{item.number}</Text>
+                                <Text style={styles.text}>{item.name}</Text>
+                                <View>
+                                  <Text style={styles.text}>{item.number}</Text>
+                                </View>
+                                <View >
+                                  <Text style={styles.text}>{item.email}</Text>
+                                </View>
                               </View>
-                              <View >
-                                <Text style={styles.text}>{item.email}</Text>
+                              <View style={styles.iconWrapper}>
+                                <Pressable onPress={() => toggleFavorite(item.id)}>
+                                  <Ionicons name="star-outline" size={24} color="black" />
+                                </Pressable>
+                                <Pressable onPress={() => Alert.alert('Funkar tyvärr inte ännu!')}>
+                                  <FontAwesome5 name="pencil-alt" size={20} color="black" />
+                                </Pressable>
+                                <Pressable onPress={() => deleterFunction(item.id)}>
+                                  <FontAwesome name="trash-o" size={24} color="black" />
+                                </Pressable>
                               </View>
                             </View>
-                            <View style={styles.iconWrapper}>
-                              <Pressable onPress={() => toggleFavorite(item.id)}>
-                                <Ionicons name="star-outline" size={24} color="black" />
-                              </Pressable>
-                              <Pressable onPress={() => Alert.alert('Funkar tyvärr inte ännu!')}>
-                                <FontAwesome5 name="pencil-alt" size={20} color="black" />
-                              </Pressable>
-                              <Pressable onPress={() => deleterFunction(item.id)}>
-                                <FontAwesome name="trash-o" size={24} color="black" />
-                              </Pressable>
-                            </View>
-                          </View>
-                          : <Text style={styles.text}>{item.name}</Text>
-                      }
-                    </View>
-                  </TouchableOpacity>
-                  : null
+                            : <Text style={styles.text}>{item.name}</Text>
+                        }
+                      </View>
+                    </TouchableOpacity>
+                    : null
                 )}
               >
               </FlatList>
@@ -278,6 +294,11 @@ const styles = StyleSheet.create({
   iconWrapper: {
     rowGap: 10,
     columnGap: 10
+  },
+
+  buttonWrapper: {
+    flexDirection: 'row',
+    columnGap: 30
   },
 
   h1: {
