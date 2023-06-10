@@ -29,7 +29,6 @@ export default function App() {
   ])
 
   const toggleContent = (id) => {
-    console.log(id)
     setContacts(
       contacts.map(contact => {
         if (contact.id == id) {
@@ -44,7 +43,6 @@ export default function App() {
   }
 
   const toggleFavorite = (id) => {
-    console.log(id)
     setContacts(
       contacts.map(contact => {
         if (contact.id == id) {
@@ -56,6 +54,27 @@ export default function App() {
         return contact;
       })
     )
+  }
+
+  const addFunction = () => {
+    
+    setContacts(current => [
+      ...current,
+      {
+      id: 8, 
+      name: name, 
+      number: `${number}`, 
+      email: `${email}`, 
+      picture: null, 
+      displayContent: false, 
+      favorite: false} ])
+
+      setPressed(false) 
+  }
+
+  const deleterFunction = (id) => {
+    let newContacts = contacts.filter((contact => contact.id != id))
+    setContacts(newContacts)
   }
 
   const [fontsLoaded] = useFonts({
@@ -119,7 +138,7 @@ export default function App() {
                     </View>
                   </View>
                 </View>
-                <TouchableOpacity style={styles.button} onPress={() => setPressed(false)}>
+                <TouchableOpacity style={styles.button} onPress={() => addFunction()}>
                   <Text style={styles.addButtonText}>Lägg till</Text>
                 </TouchableOpacity>
               </View>}
@@ -157,7 +176,7 @@ export default function App() {
                               <Pressable onPress={() => Alert.alert('Funkar tyvärr inte ännu!')}>
                                 <FontAwesome5 name="pencil-alt" size={20} color="black" />
                               </Pressable>
-                              <Pressable onPress={() => Alert.alert('Funkar tyvärr inte ännu!')}>
+                              <Pressable onPress={() => deleterFunction(item.id)}>
                                 <FontAwesome name="trash-o" size={24} color="black" />
                               </Pressable>
                             </View>
@@ -206,7 +225,7 @@ export default function App() {
                               <Pressable onPress={() => Alert.alert('Funkar tyvärr inte ännu!')}>
                                 <FontAwesome5 name="pencil-alt" size={20} color="black" />
                               </Pressable>
-                              <Pressable onPress={() => Alert.alert('Funkar tyvärr inte ännu!')}>
+                              <Pressable onPress={() => deleterFunction(item.id)}>
                                 <FontAwesome name="trash-o" size={24} color="black" />
                               </Pressable>
                             </View>
