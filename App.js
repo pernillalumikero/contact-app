@@ -6,7 +6,6 @@ import * as SplashScreen from 'expo-splash-screen'
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import { EvilIcons } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 
 
@@ -20,10 +19,6 @@ export default function App() {
   const [name, setName] = useState('')
   const [number, setNumber] = useState(null)
   const [email, setEmail] = useState('')
-
-  const [updatedName, setUpdatedName] = useState('')
-  const [updatedNumber, setUpdatedNumber] = useState(null)
-  const [updatedEmail, setUpdatedEmail] = useState('')
 
   const [contacts, setContacts] = useState([
     { id: 1, name: 'Jane Doe', number: '070 123 45 67', email: 'jane.doe@somemail.com', picture: require('./assets/images/michael-dam-mEZ3PoFGs_k-unsplash.jpg'), displayContent: false, favorite: true, updatePressed: false },
@@ -83,6 +78,10 @@ export default function App() {
       displayContent: false,
       favorite: false
     })
+
+    setName('')
+    setNumber(null)
+    setEmail('')
     setPressed(false)
   }
 
@@ -99,23 +98,26 @@ export default function App() {
       })
     )
   }
-  // Not working
-  // const doneFunction = (id) => {
-  //   setContacts((prevContacts) =>
-  //     prevContacts.map((contact) => {
-  //       if (contact.id === id) {
-  //         return {
-  //           ...contact,
-  //           name: updatedName !== '' ? updatedName : contact.name,
-  //           number: updatedNumber !== null ? updatedNumber : contact.number,
-  //           email: updatedEmail !== '' ? updatedEmail : contact.email,
-  //           updatePressed: false,
-  //         };
-  //       }
-  //       return contact;
-  //     })
-  //   );
-  // };
+
+  const doneFunction = (id) => {
+    setContacts(contacts.map((contact) => {
+      if (contact.id === id) {
+        return {
+          ...contact,
+          name: name !== '' ? name : contact.name,
+          number: number !== null ? number : contact.number,
+          email: email !== '' ? email : contact.email,
+          updatePressed: false,
+        };
+      }
+      setName('')
+      setNumber(null)
+      setEmail('')
+
+      return contact;
+    })
+    );
+  };
 
   const deleterFunction = (id) => {
     let newContacts = contacts.filter((contact => contact.id != id))
@@ -237,22 +239,22 @@ export default function App() {
                                 </View>
                                 : <View>
                                   <View>
-                                    <Pressable style={styles.article} onPress={() => updateFunction(item.id)}>
-                                      <Text style={styles.text}>{item.name}</Text>
-                                      <SimpleLineIcons name="pencil" size={20} color="black" />
+                                    <TextInput style={styles.text} onChangeText={(value) => setName(value)}>{item.name}</TextInput>
+                                    <View style={styles.article}>
+                                      <TextInput style={styles.text} keyboardType='numeric' onChangeText={(value) => setNumber(value)}>{item.number}</TextInput>
+                                    </View>
+                                    <View style={styles.article}>
+                                      <TextInput style={styles.text} onChangeText={(value) => setEmail(value)}>{item.email}</TextInput>
+                                    </View>
+                                  </View>
+                                  <View style={styles.iconWrapper}>
+                                    <Pressable onPress={() => doneFunction(item.id)}>
+                                      <Ionicons name="checkmark-circle-outline" size={24} color="black" />
                                     </Pressable>
-                                    <View style={styles.article}>
-                                      <Text style={styles.text}>{item.number}</Text>
-                                      <Pressable onPress={() => updateFunction(item.id)}>
-                                        <SimpleLineIcons name="pencil" size={20} color="black" />
-                                      </Pressable>
-                                    </View>
-                                    <View style={styles.article}>
-                                      <Text style={styles.text}>{item.email}</Text>
-                                      <Pressable onPress={() => updateFunction(item.id)}>
-                                        <SimpleLineIcons name="pencil" size={20} color="black" />
-                                      </Pressable>
-                                    </View>
+                                    <Ionicons name="close-circle-outline" size={24} color="black" />
+                                    <Pressable onPress={() => deleterFunction(item.id)}>
+                                      <FontAwesome name="trash-o" size={24} color="black" />
+                                    </Pressable>
                                   </View>
                                 </View>
                               }
@@ -286,26 +288,50 @@ export default function App() {
                                   style={styles.picture}
                                 ></Image>
                                 : <FontAwesome name="user-circle-o" size={100} color="black" />}
-                              <View>
-                                <Text style={styles.text}>{item.name}</Text>
-                                <View>
-                                  <Text style={styles.text}>{item.number}</Text>
+                              {!item.updatePressed
+                                ? <View>
+                                  <View>
+                                    <Text style={styles.text}>{item.name}</Text>
+                                    <View>
+                                      <Text style={styles.text}>{item.number}</Text>
+                                    </View>
+                                    <View >
+                                      <Text style={styles.text}>{item.email}</Text>
+                                    </View>
+                                  </View>
+                                  <View style={styles.iconWrapper}>
+                                    <Pressable onPress={() => toggleFavorite(item.id)}>
+                                      <Ionicons name="star-outline" size={24} color="black" />
+                                    </Pressable>
+                                    <Pressable onPress={() => updateFunction(item.id)}>
+                                      <SimpleLineIcons name="pencil" size={20} color="black" />
+                                    </Pressable>
+                                    <Pressable onPress={() => deleterFunction(item.id)}>
+                                      <FontAwesome name="trash-o" size={24} color="black" />
+                                    </Pressable>
+                                  </View>
                                 </View>
-                                <View >
-                                  <Text style={styles.text}>{item.email}</Text>
+                                : <View>
+                                  <View>
+                                    <TextInput style={styles.text} onChangeText={(value) => setName(value)}>{item.name}</TextInput>
+                                    <View style={styles.article}>
+                                      <TextInput style={styles.text} keyboardType='numeric' onChangeText={(value) => setNumber(value)}>{item.number}</TextInput>
+                                    </View>
+                                    <View style={styles.article}>
+                                      <TextInput style={styles.text} onChangeText={(value) => setEmail(value)}>{item.email}</TextInput>
+                                    </View>
+                                  </View>
+                                  <View style={styles.iconWrapper}>
+                                    <Pressable onPress={() => doneFunction(item.id)}>
+                                      <Ionicons name="checkmark-circle-outline" size={24} color="black" />
+                                    </Pressable>
+                                    <Ionicons name="close-circle-outline" size={24} color="black" />
+                                    <Pressable onPress={() => deleterFunction(item.id)}>
+                                      <FontAwesome name="trash-o" size={24} color="black" />
+                                    </Pressable>
+                                  </View>
                                 </View>
-                              </View>
-                              <View style={styles.iconWrapper}>
-                                <Pressable onPress={() => toggleFavorite(item.id)}>
-                                  <Ionicons name="star-outline" size={24} color="black" />
-                                </Pressable>
-                                <Pressable onPress={() => Alert.alert('Funkar tyvärr inte ännu!')}>
-                                  <FontAwesome5 name="pencil-alt" size={20} color="black" />
-                                </Pressable>
-                                <Pressable onPress={() => deleterFunction(item.id)}>
-                                  <FontAwesome name="trash-o" size={24} color="black" />
-                                </Pressable>
-                              </View>
+                              }
                             </View>
                             : <Text style={styles.text}>{item.name}</Text>
                         }
@@ -355,7 +381,8 @@ const styles = StyleSheet.create({
   iconWrapper: {
     flexDirection: 'row',
     rowGap: 10,
-    columnGap: 10
+    columnGap: '30',
+    marginBottom: 10
   },
 
   buttonWrapper: {
