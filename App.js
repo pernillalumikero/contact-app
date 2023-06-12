@@ -6,6 +6,8 @@ import * as SplashScreen from 'expo-splash-screen'
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { EvilIcons } from '@expo/vector-icons';
+import { SimpleLineIcons } from '@expo/vector-icons';
 
 
 
@@ -19,13 +21,17 @@ export default function App() {
   const [number, setNumber] = useState(null)
   const [email, setEmail] = useState('')
 
+  const [updatedName, setUpdatedName] = useState('')
+  const [updatedNumber, setUpdatedNumber] = useState(null)
+  const [updatedEmail, setUpdatedEmail] = useState('')
+
   const [contacts, setContacts] = useState([
-    { id: 1, name: 'Jane Doe', number: '070 123 45 67', email: 'jane.doe@somemail.com', picture: require('./assets/images/michael-dam-mEZ3PoFGs_k-unsplash.jpg'), displayContent: false, favorite: true },
-    { id: 2, name: 'John Doe', number: '070 123 45 67', email: 'john.doe@somemail.com', picture: require('./assets/images/sohaib-al-kharsa-agQ0G6djwU4-unsplash.jpg'), displayContent: false, favorite: true },
-    { id: 3, name: 'Jamal Doe', number: '070 123 45 67', email: 'jamal.doe@somemail.com', picture: require('./assets/images/gift-habeshaw-KBv5dEN3QtY-unsplash.jpg'), displayContent: false, favorite: false },
-    { id: 4, name: 'Jennifer Doe', number: '070 123 45 67', email: 'jennifer.doe@somemail.com', picture: require('./assets/images/kevin-hellhake-7BbHyuAf1sg-unsplash.jpg'), displayContent: false, favorite: false },
-    { id: 5, name: 'Janne Doe', number: '070 123 45 67', email: 'janne.doe@somemail.com', picture: require('./assets/images/vince-fleming-j3lf-Jn6deo-unsplash.jpg'), displayContent: false, favorite: false },
-    { id: 6, name: 'Juna Doe', number: '070 123 45 67', email: 'juna.doe@somemail.com', picture: require('./assets/images/le-minh-phuong-jGZITdFhmts-unsplash.jpg'), displayContent: false, favorite: false },
+    { id: 1, name: 'Jane Doe', number: '070 123 45 67', email: 'jane.doe@somemail.com', picture: require('./assets/images/michael-dam-mEZ3PoFGs_k-unsplash.jpg'), displayContent: false, favorite: true, updatePressed: false },
+    { id: 2, name: 'John Doe', number: '070 123 45 67', email: 'john.doe@somemail.com', picture: require('./assets/images/sohaib-al-kharsa-agQ0G6djwU4-unsplash.jpg'), displayContent: false, favorite: true, updatePressed: false },
+    { id: 3, name: 'Jamal Doe', number: '070 123 45 67', email: 'jamal.doe@somemail.com', picture: require('./assets/images/gift-habeshaw-KBv5dEN3QtY-unsplash.jpg'), displayContent: false, favorite: false, updatePressed: false },
+    { id: 4, name: 'Jennifer Doe', number: '070 123 45 67', email: 'jennifer.doe@somemail.com', picture: require('./assets/images/kevin-hellhake-7BbHyuAf1sg-unsplash.jpg'), displayContent: false, favorite: false, updatePressed: false },
+    { id: 5, name: 'Janne Doe', number: '070 123 45 67', email: 'janne.doe@somemail.com', picture: require('./assets/images/vince-fleming-j3lf-Jn6deo-unsplash.jpg'), displayContent: false, favorite: false, updatePressed: false },
+    { id: 6, name: 'Juna Doe', number: '070 123 45 67', email: 'juna.doe@somemail.com', picture: require('./assets/images/le-minh-phuong-jGZITdFhmts-unsplash.jpg'), displayContent: false, favorite: false, updatePressed: false },
   ])
 
   const toggleContent = (id) => {
@@ -34,7 +40,8 @@ export default function App() {
         if (contact.id == id) {
           return {
             ...contact,
-            displayContent: !contact.displayContent
+            displayContent: !contact.displayContent,
+            updatePressed: false
           }
         }
         return contact;
@@ -80,8 +87,35 @@ export default function App() {
   }
 
   const updateFunction = (id) => {
-
+    setContacts(
+      contacts.map(contact => {
+        if (contact.id == id) {
+          return {
+            ...contact,
+            updatePressed: !contact.updatePressed
+          }
+        }
+        return contact;
+      })
+    )
   }
+  // Not working
+  // const doneFunction = (id) => {
+  //   setContacts((prevContacts) =>
+  //     prevContacts.map((contact) => {
+  //       if (contact.id === id) {
+  //         return {
+  //           ...contact,
+  //           name: updatedName !== '' ? updatedName : contact.name,
+  //           number: updatedNumber !== null ? updatedNumber : contact.number,
+  //           email: updatedEmail !== '' ? updatedEmail : contact.email,
+  //           updatePressed: false,
+  //         };
+  //       }
+  //       return contact;
+  //     })
+  //   );
+  // };
 
   const deleterFunction = (id) => {
     let newContacts = contacts.filter((contact => contact.id != id))
@@ -145,7 +179,9 @@ export default function App() {
                     </View>
                     <View style={styles.inputWrapper}>
                       <Text style={styles.text}>Email:</Text>
-                      <TextInput style={styles.input} placeholder='jane.doe@somemail.com' onChangeText={(value) => setEmail(value)}></TextInput>
+                      <TextInput style={styles.input}
+                        placeholder='jane.doe@somemail.com'
+                        onChangeText={(value) => setEmail(value)}></TextInput>
                     </View>
                   </View>
                 </View>
@@ -176,26 +212,51 @@ export default function App() {
                                   style={styles.picture}
                                 ></Image>
                                 : <FontAwesome name="user-circle-o" size={100} color="black" />}
-                              <View>
-                                <Text style={styles.text}>{item.name}</Text>
-                                <View>
-                                  <Text style={styles.text}>{item.number}</Text>
+                              {!item.updatePressed
+                                ? <View>
+                                  <View>
+                                    <Text style={styles.text}>{item.name}</Text>
+                                    <View>
+                                      <Text style={styles.text}>{item.number}</Text>
+                                    </View>
+                                    <View >
+                                      <Text style={styles.text}>{item.email}</Text>
+                                    </View>
+                                  </View>
+                                  <View style={styles.iconWrapper}>
+                                    <Pressable onPress={() => toggleFavorite(item.id)}>
+                                      <Ionicons name="star-sharp" size={24} color="black" />
+                                    </Pressable>
+                                    <Pressable onPress={() => updateFunction(item.id)}>
+                                      <SimpleLineIcons name="pencil" size={20} color="black" />
+                                    </Pressable>
+                                    <Pressable onPress={() => deleterFunction(item.id)}>
+                                      <FontAwesome name="trash-o" size={24} color="black" />
+                                    </Pressable>
+                                  </View>
                                 </View>
-                                <View >
-                                  <Text style={styles.text}>{item.email}</Text>
+                                : <View>
+                                  <View>
+                                    <Pressable style={styles.article} onPress={() => updateFunction(item.id)}>
+                                      <Text style={styles.text}>{item.name}</Text>
+                                      <SimpleLineIcons name="pencil" size={20} color="black" />
+                                    </Pressable>
+                                    <View style={styles.article}>
+                                      <Text style={styles.text}>{item.number}</Text>
+                                      <Pressable onPress={() => updateFunction(item.id)}>
+                                        <SimpleLineIcons name="pencil" size={20} color="black" />
+                                      </Pressable>
+                                    </View>
+                                    <View style={styles.article}>
+                                      <Text style={styles.text}>{item.email}</Text>
+                                      <Pressable onPress={() => updateFunction(item.id)}>
+                                        <SimpleLineIcons name="pencil" size={20} color="black" />
+                                      </Pressable>
+                                    </View>
+                                  </View>
                                 </View>
-                              </View>
-                              <View style={styles.iconWrapper}>
-                                <Pressable onPress={() => toggleFavorite(item.id)}>
-                                  <Ionicons name="star-sharp" size={24} color="black" />
-                                </Pressable>
-                                <Pressable onPress={() => updateFunction(item.id)}>
-                                  <FontAwesome5 name="pencil-alt" size={20} color="black" />
-                                </Pressable>
-                                <Pressable onPress={() => deleterFunction(item.id)}>
-                                  <FontAwesome name="trash-o" size={24} color="black" />
-                                </Pressable>
-                              </View>
+                              }
+
                             </View>
                             : <Text style={styles.text}>{item.name}</Text>
                         }
@@ -292,6 +353,7 @@ const styles = StyleSheet.create({
   },
 
   iconWrapper: {
+    flexDirection: 'row',
     rowGap: 10,
     columnGap: 10
   },
