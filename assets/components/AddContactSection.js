@@ -8,6 +8,14 @@ export default function AddContactSection({ setPressed, name, setName, number, s
 
     const addFunction = () => {
 
+        if(name === '') {
+           return Alert.alert('Lägg till ett namn')
+        }
+
+        if (number === '' && email === '') {
+            return  Alert.alert('Lägg till en kontaktuppgift')
+        }
+
         const createNewId = () => {
             let id = Math.floor(Math.random() * (1000 - 1) + 1);
 

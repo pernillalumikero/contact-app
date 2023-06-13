@@ -3,12 +3,14 @@ import { FlatList, Pressable, StyleSheet, Text, TextInput, View, TouchableOpacit
 import { useFonts } from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as SplashScreen from 'expo-splash-screen'
-import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import AddContactButton from './assets/components/AddContactButton';
 import AddContactSection from './assets/components/AddContactSection';
+import Header from './assets/components/Header';
+import DefaultContactLayout from './assets/components/DefaultContactLayout';
+import UpdateContactLayout from './assets/components/UpdateContactLayout';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,7 +19,7 @@ export default function App() {
   const [pressed, setPressed] = useState(false)
 
   const [name, setName] = useState('')
-  const [number, setNumber] = useState(null)
+  const [number, setNumber] = useState('')
   const [email, setEmail] = useState('')
 
   const [contacts, setContacts] = useState([
@@ -58,8 +60,6 @@ export default function App() {
     )
   }
 
-
-
   const updateFunction = (id) => {
     setContacts(
       contacts.map(contact => {
@@ -80,21 +80,21 @@ export default function App() {
         return {
           ...contact,
           name: name !== '' ? name : contact.name,
-          number: number !== null ? number : contact.number,
+          number: number !== '' ? number : contact.number,
           email: email !== '' ? email : contact.email,
           updatePressed: false,
-        };
+        }
       }
       setName('')
-      setNumber(null)
+      setNumber('')
       setEmail('')
 
       return contact;
     })
-    );
-  };
+    )
+  }
 
-  const deleterFunction = (id) => {
+  const deleteFunction = (id) => {
     let newContacts = contacts.filter((contact => contact.id != id))
     setContacts(newContacts)
   }
@@ -122,85 +122,61 @@ export default function App() {
       >
         <ScrollView style={styles.scrollView}>
           <View style={styles.content}>
-            <View style={styles.wrapper}>
-              <FontAwesome5 name="users" size={24} color="black" />
-              <Text style={styles.h1}>KONTAKTER</Text>
-            </View>
+            <Header />
+            {/* check if add-button is clicked - default is set to false */}
             {!pressed
+              //show only button if not clicked
               ? <AddContactButton setPressed={setPressed} />
+              // if clicked show add section with input fields and buttons to add or cancel
               : <AddContactSection
-                setPressed={setPressed} 
+                setPressed={setPressed}
                 name={name}
-                setName={setName} 
+                setName={setName}
                 number={number}
                 setNumber={setNumber}
                 email={email}
-                setEmail={setEmail} 
+                setEmail={setEmail}
                 contacts={contacts} />}
             <View style={styles.wrapper2}>
               <Text style={styles.h2}>Favoriter</Text>
+              {/* render a list of favorite-contacts */}
               <FlatList
                 data={contacts}
                 renderItem={({ item }) => (
+                  // check if contact is a favorite - if true add to the list
                   item.favorite
                     ? <TouchableOpacity
+                      // Let user hide/show more info about contact - default is false(hidden)
                       onPress={() => toggleContent(item.id)}>
                       <View style={styles.section2}>
-                        {
-                          item.displayContent
-                            ? <View style={styles.article}>
-                              {item.picture
-                                ? <Image
-                                  source={item.picture}
-                                  style={styles.picture}
-                                ></Image>
-                                : <FontAwesome name="user-circle-o" size={100} color="black" />}
-                              {!item.updatePressed
-                                ? <View>
-                                  <View>
-                                    <Text style={styles.text}>{item.name}</Text>
-                                    <View>
-                                      <Text style={styles.text}>{item.number}</Text>
-                                    </View>
-                                    <View >
-                                      <Text style={styles.text}>{item.email}</Text>
-                                    </View>
-                                  </View>
-                                  <View style={styles.iconWrapper}>
-                                    <Pressable onPress={() => toggleFavorite(item.id)}>
-                                      <Ionicons name="star-sharp" size={24} color="black" />
-                                    </Pressable>
-                                    <Pressable onPress={() => updateFunction(item.id)}>
-                                      <SimpleLineIcons name="pencil" size={20} color="black" />
-                                    </Pressable>
-                                    <Pressable onPress={() => deleterFunction(item.id)}>
-                                      <FontAwesome name="trash-o" size={24} color="black" />
-                                    </Pressable>
-                                  </View>
-                                </View>
-                                : <View>
-                                  <View>
-                                    <TextInput style={styles.text} onChangeText={(value) => setName(value)}>{item.name}</TextInput>
-                                    <View style={styles.article}>
-                                      <TextInput style={styles.text} keyboardType='numeric' onChangeText={(value) => setNumber(value)}>{item.number}</TextInput>
-                                    </View>
-                                    <View style={styles.article}>
-                                      <TextInput style={styles.text} onChangeText={(value) => setEmail(value)}>{item.email}</TextInput>
-                                    </View>
-                                  </View>
-                                  <View style={styles.iconWrapper}>
-                                    <Pressable onPress={() => doneFunction(item.id)}>
-                                      <Ionicons name="checkmark-circle-outline" size={24} color="black" />
-                                    </Pressable>
-                                    <Ionicons name="close-circle-outline" size={24} color="black" />
-                                    <Pressable onPress={() => deleterFunction(item.id)}>
-                                      <FontAwesome name="trash-o" size={24} color="black" />
-                                    </Pressable>
-                                  </View>
-                                </View>
-                              }
-                            </View>
-                            : <Text style={styles.text}>{item.name}</Text>
+                        {item.displayContent
+                          ? <View style={styles.article}>
+                            {item.picture
+                              ? <Image
+                                source={item.picture}
+                                style={styles.picture}
+                              ></Image>
+                              : <FontAwesome name="user-circle-o" size={100} color="black" />}
+                              {/* let user update contact info - show input fields in click - default is false */}
+                            {!item.updatePressed
+                              ? <DefaultContactLayout
+                                toggleFavorite={toggleFavorite}
+                                updateFunction={updateFunction}
+                                deleteFunction={deleteFunction}
+                                item={item}
+                                favorite="star-sharp" />
+                              : <UpdateContactLayout
+                                setName={setName}
+                                setNumber={setNumber}
+                                setEmail={setEmail}
+                                item={item}
+                                doneFunction={doneFunction}
+                                updateFunction={updateFunction}
+                                deleteFunction={deleteFunction} />
+                            }
+                          </View>
+                          // if contact info is hidden, only show contact name
+                          : <Text style={styles.text}>{item.name}</Text>
                         }
                       </View>
                     </TouchableOpacity>
@@ -229,48 +205,20 @@ export default function App() {
                                 ></Image>
                                 : <FontAwesome name="user-circle-o" size={100} color="black" />}
                               {!item.updatePressed
-                                ? <View>
-                                  <View>
-                                    <Text style={styles.text}>{item.name}</Text>
-                                    <View>
-                                      <Text style={styles.text}>{item.number}</Text>
-                                    </View>
-                                    <View >
-                                      <Text style={styles.text}>{item.email}</Text>
-                                    </View>
-                                  </View>
-                                  <View style={styles.iconWrapper}>
-                                    <Pressable onPress={() => toggleFavorite(item.id)}>
-                                      <Ionicons name="star-outline" size={24} color="black" />
-                                    </Pressable>
-                                    <Pressable onPress={() => updateFunction(item.id)}>
-                                      <SimpleLineIcons name="pencil" size={20} color="black" />
-                                    </Pressable>
-                                    <Pressable onPress={() => deleterFunction(item.id)}>
-                                      <FontAwesome name="trash-o" size={24} color="black" />
-                                    </Pressable>
-                                  </View>
-                                </View>
-                                : <View>
-                                  <View>
-                                    <TextInput style={styles.text} onChangeText={(value) => setName(value)}>{item.name}</TextInput>
-                                    <View style={styles.article}>
-                                      <TextInput style={styles.text} keyboardType='numeric' onChangeText={(value) => setNumber(value)}>{item.number}</TextInput>
-                                    </View>
-                                    <View style={styles.article}>
-                                      <TextInput style={styles.text} onChangeText={(value) => setEmail(value)}>{item.email}</TextInput>
-                                    </View>
-                                  </View>
-                                  <View style={styles.iconWrapper}>
-                                    <Pressable onPress={() => doneFunction(item.id)}>
-                                      <Ionicons name="checkmark-circle-outline" size={24} color="black" />
-                                    </Pressable>
-                                    <Ionicons name="close-circle-outline" size={24} color="black" />
-                                    <Pressable onPress={() => deleterFunction(item.id)}>
-                                      <FontAwesome name="trash-o" size={24} color="black" />
-                                    </Pressable>
-                                  </View>
-                                </View>
+                                ? <DefaultContactLayout
+                                  toggleFavorite={toggleFavorite}
+                                  updateFunction={updateFunction}
+                                  deleteFunction={deleteFunction}
+                                  item={item}
+                                  favorite='star-outline' />
+                                : <UpdateContactLayout
+                                  setName={setName}
+                                  setNumber={setNumber}
+                                  setEmail={setEmail}
+                                  item={item}
+                                  doneFunction={doneFunction}
+                                  updateFunction={updateFunction}
+                                  deleteFunction={deleteFunction} />
                               }
                             </View>
                             : <Text style={styles.text}>{item.name}</Text>
@@ -314,11 +262,6 @@ const styles = StyleSheet.create({
     rowGap: 10,
     columnGap: '30',
     marginBottom: 10
-  },
-
-  h1: {
-    fontFamily: 'Montserrat-Bold',
-    fontSize: 20,
   },
 
   h2: {
