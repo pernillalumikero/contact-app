@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Alert, FlatList, Pressable, StyleSheet, Text, TextInput, View, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, TextInput, View, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useFonts } from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as SplashScreen from 'expo-splash-screen'
@@ -7,8 +7,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
-
-
+import AddContactButton from './assets/components/AddContactButton';
+import AddContactSection from './assets/components/AddContactSection';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -58,32 +58,7 @@ export default function App() {
     )
   }
 
-  const addFunction = () => {
 
-    const createNewId = () => {
-      let id = Math.floor(Math.random() * (1000 - 1) + 1);
-
-      while (contacts.some(contact => contact.id === id)) {
-        id++;
-      }
-      return id;
-    }
-
-    contacts.push({
-      id: createNewId(),
-      name: name,
-      number: number,
-      email: email,
-      picture: null,
-      displayContent: false,
-      favorite: false
-    })
-
-    setName('')
-    setNumber(null)
-    setEmail('')
-    setPressed(false)
-  }
 
   const updateFunction = (id) => {
     setContacts(
@@ -152,50 +127,16 @@ export default function App() {
               <Text style={styles.h1}>KONTAKTER</Text>
             </View>
             {!pressed
-              ? <TouchableOpacity style={styles.addSection} onPress={() => setPressed(true)}>
-                <FontAwesome name="user-circle-o" size={40} color="black" />
-                <Text style={styles.buttonText}>Lägg till ny kontakt...</Text>
-                <FontAwesome name="plus-circle" size={24} color="black" />
-              </TouchableOpacity>
-              : <View style={styles.addNew}>
-                <View>
-                  <TouchableOpacity style={styles.picWrapper} onPress={() => Alert.alert('Funkar tyvärr inte ännu!')}>
-                    <FontAwesome name="user-circle-o" size={40} color="black" />
-                    <Text style={styles.text}>Lägg till bild</Text>
-                  </TouchableOpacity>
-                  <View>
-                    <View style={styles.inputWrapper}>
-                      <Text style={styles.text}>Namn:</Text>
-                      <TextInput
-                        style={styles.input}
-                        placeholder='Jane Doe'
-                        onChangeText={(value) => setName(value)}></TextInput>
-                    </View>
-                    <View style={styles.inputWrapper}>
-                      <Text style={styles.text}>Telefon:</Text>
-                      <TextInput
-                        style={styles.input}
-                        placeholder='070 123 45 67'
-                        keyboardType='numeric'
-                        onChangeText={(value) => setNumber(value)}></TextInput>
-                    </View>
-                    <View style={styles.inputWrapper}>
-                      <Text style={styles.text}>Email:</Text>
-                      <TextInput style={styles.input}
-                        placeholder='jane.doe@somemail.com'
-                        onChangeText={(value) => setEmail(value)}></TextInput>
-                    </View>
-                  </View>
-                </View>
-                <View style={styles.buttonWrapper}>
-                  <TouchableOpacity style={styles.button} onPress={() => addFunction()}>
-                    <Text style={styles.addButtonText}>Lägg till</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.button} onPress={() => setPressed(false)}>
-                    <Text style={styles.addButtonText}>Avbryt</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>}
+              ? <AddContactButton setPressed={setPressed} />
+              : <AddContactSection
+                setPressed={setPressed} 
+                name={name}
+                setName={setName} 
+                number={number}
+                setNumber={setNumber}
+                email={email}
+                setEmail={setEmail} 
+                contacts={contacts} />}
             <View style={styles.wrapper2}>
               <Text style={styles.h2}>Favoriter</Text>
               <FlatList
@@ -258,7 +199,6 @@ export default function App() {
                                   </View>
                                 </View>
                               }
-
                             </View>
                             : <Text style={styles.text}>{item.name}</Text>
                         }
@@ -369,25 +309,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'blue'
   },
 
-  picWrapper: {
-    alignItems: 'center'
-  },
-
-  inputWrapper: {
-    flexDirection: 'row',
-    columnGap: 10,
-  },
-
   iconWrapper: {
     flexDirection: 'row',
     rowGap: 10,
     columnGap: '30',
     marginBottom: 10
-  },
-
-  buttonWrapper: {
-    flexDirection: 'row',
-    columnGap: 30
   },
 
   h1: {
@@ -399,11 +325,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-Bold',
     fontSize: 18,
     margin: 20,
-  },
-
-  buttonText: {
-    fontFamily: 'Montserrat-Regular',
-    fontSize: 15,
   },
 
   linearGradient: {
@@ -456,37 +377,6 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
 
-  addSection: {
-    flexDirection: 'row',
-    columnGap: 40,
-    marginVertical: 10,
-    backgroundColor: 'white',
-    width: '90%',
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4,
-  },
-
-  addNew: {
-    flexDirection: 'column',
-    backgroundColor: 'white',
-    width: '90%',
-    borderRadius: 10,
-    marginVertical: 20,
-    paddingVertical: 20,
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-  },
-
   input: {
     fontFamily: 'Montserrat-Regular',
     borderBottomColor: 'black',
@@ -495,20 +385,6 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: 'Montserrat-Regular',
     marginVertical: 10,
-  },
-
-  button: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: '#454545',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-
-  },
-
-  addButtonText: {
-    color: 'white'
   },
 
   wrapper2: {
