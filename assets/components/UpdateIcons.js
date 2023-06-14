@@ -7,9 +7,9 @@ export default function UpdateIcons({ doneFunction, updateFunction, deleteFuncti
 
     return (
         <View style={styles.iconWrapper}>
-            <IconButton onPress={doneFunction} icon="checkmark-circle-outline" item={item}/>
-            <IconButton onPress={updateFunction} icon="close-circle-outline" item={item}/>
-            <IconButton onPress={deleteFunction} icon="trash-outline" item={item}/>
+            <IconButton onPress={doneFunction} icon="checkmark-circle-outline" item={item} size={24}/>
+            <IconButton onPress={updateFunction} icon="close-circle-outline" item={item} size={24}/>
+            <IconButton onPress={deleteFunction} icon="trash-outline" item={item} size={24}/>
         </View>
     )
 }

@@ -10,6 +10,7 @@ import AddContactSection from './assets/components/AddContactSection';
 import Header from './assets/components/Header';
 import DefaultContactLayout from './assets/components/DefaultContactLayout';
 import UpdateContactLayout from './assets/components/UpdateContactLayout';
+import NavBar from './assets/components/NavBar';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -153,103 +154,104 @@ export default function App() {
         <FlatList
           data={[1]}
           renderItem={() => (
-        <View style={styles.content}>
-          <View style={styles.wrapper2}>
-            <Text style={styles.h2}>Favoriter</Text>
-            {/* render a list of favorite-contacts */}
-            <FlatList
-              data={contacts}
-              renderItem={({ item }) => (
-                // check if contact is a favorite - if true add to the list
-                item.favorite
-                  ? <TouchableOpacity
-                    // Let user hide/show more info about contact - default is false(hidden)
-                    onPress={() => toggleContent(item.id)}>
-                    <View style={styles.section}>
-                      {item.displayContent
-                        ? <View style={styles.article}>
-                          {item.picture
-                            ? <Image
-                              source={item.picture}
-                              style={styles.picture}
-                            ></Image>
-                            : <FontAwesome name="user-circle-o" size={100} color="black" />}
-                          {/* let user update contact info - show input fields in click - default is false */}
-                          {!item.updatePressed
-                            ? <DefaultContactLayout
-                              toggleFavorite={toggleFavorite}
-                              updateFunction={updateFunction}
-                              deleteFunction={deleteFunction}
-                              item={item}
-                              favorite="star-sharp" />
-                            : <UpdateContactLayout
-                              setName={setName}
-                              setNumber={setNumber}
-                              setEmail={setEmail}
-                              item={item}
-                              doneFunction={doneFunction}
-                              updateFunction={updateFunction}
-                              deleteFunction={deleteFunction} />
+            <View style={styles.content}>
+              <View style={styles.wrapper2}>
+                <Text style={styles.h2}>Favoriter</Text>
+                {/* render a list of favorite-contacts */}
+                <FlatList
+                  data={contacts}
+                  renderItem={({ item }) => (
+                    // check if contact is a favorite - if true add to the list
+                    item.favorite
+                      ? <TouchableOpacity
+                        // Let user hide/show more info about contact - default is false(hidden)
+                        onPress={() => toggleContent(item.id)}>
+                        <View style={styles.section}>
+                          {item.displayContent
+                            ? <View style={styles.article}>
+                              {item.picture
+                                ? <Image
+                                  source={item.picture}
+                                  style={styles.picture}
+                                ></Image>
+                                : <FontAwesome name="user-circle-o" size={100} color="black" />}
+                              {/* let user update contact info - show input fields in click - default is false */}
+                              {!item.updatePressed
+                                ? <DefaultContactLayout
+                                  toggleFavorite={toggleFavorite}
+                                  updateFunction={updateFunction}
+                                  deleteFunction={deleteFunction}
+                                  item={item}
+                                  favorite="star-sharp" />
+                                : <UpdateContactLayout
+                                  setName={setName}
+                                  setNumber={setNumber}
+                                  setEmail={setEmail}
+                                  item={item}
+                                  doneFunction={doneFunction}
+                                  updateFunction={updateFunction}
+                                  deleteFunction={deleteFunction} />
+                              }
+                            </View>
+                            // if contact info is hidden, only show contact name
+                            : <Text style={styles.text}>{item.name}</Text>
                           }
                         </View>
-                        // if contact info is hidden, only show contact name
-                        : <Text style={styles.text}>{item.name}</Text>
-                      }
-                    </View>
-                  </TouchableOpacity>
-                  : null
-              )}
-            >
-            </FlatList>
-          </View>
-          <View style={styles.wrapper2}>
-            <Text style={styles.h2}>Nyligen tillagda</Text>
-            <FlatList
-              data={contacts}
-              style={styles.list}
-              renderItem={({ item }) => (
-                !item.favorite
-                  ? <TouchableOpacity
-                    onPress={() => toggleContent(item.id)}>
-                    <View style={styles.section}>
-                      {
-                        item.displayContent
-                          ? <View style={styles.article}>
-                            {item.picture
-                              ? <Image
-                                source={item.picture}
-                                style={styles.picture}
-                              ></Image>
-                              : <FontAwesome name="user-circle-o" size={100} color="black" />}
-                            {!item.updatePressed
-                              ? <DefaultContactLayout
-                                toggleFavorite={toggleFavorite}
-                                updateFunction={updateFunction}
-                                deleteFunction={deleteFunction}
-                                item={item}
-                                favorite='star-outline' />
-                              : <UpdateContactLayout
-                                setName={setName}
-                                setNumber={setNumber}
-                                setEmail={setEmail}
-                                item={item}
-                                doneFunction={doneFunction}
-                                updateFunction={updateFunction}
-                                deleteFunction={deleteFunction} />
-                            }
-                          </View>
-                          : <Text style={styles.text}>{item.name}</Text>
-                      }
-                    </View>
-                  </TouchableOpacity>
-                  : null
-              )}
-            >
-            </FlatList>
-          </View>
-        </View>
-            )}
-            />
+                      </TouchableOpacity>
+                      : null
+                  )}
+                >
+                </FlatList>
+              </View>
+              <View style={styles.wrapper2}>
+                <Text style={styles.h2}>Nyligen tillagda</Text>
+                <FlatList
+                  data={contacts}
+                  style={styles.list}
+                  renderItem={({ item }) => (
+                    !item.favorite
+                      ? <TouchableOpacity
+                        onPress={() => toggleContent(item.id)}>
+                        <View style={styles.section}>
+                          {
+                            item.displayContent
+                              ? <View style={styles.article}>
+                                {item.picture
+                                  ? <Image
+                                    source={item.picture}
+                                    style={styles.picture}
+                                  ></Image>
+                                  : <FontAwesome name="user-circle-o" size={100} color="black" />}
+                                {!item.updatePressed
+                                  ? <DefaultContactLayout
+                                    toggleFavorite={toggleFavorite}
+                                    updateFunction={updateFunction}
+                                    deleteFunction={deleteFunction}
+                                    item={item}
+                                    favorite='star-outline' />
+                                  : <UpdateContactLayout
+                                    setName={setName}
+                                    setNumber={setNumber}
+                                    setEmail={setEmail}
+                                    item={item}
+                                    doneFunction={doneFunction}
+                                    updateFunction={updateFunction}
+                                    deleteFunction={deleteFunction} />
+                                }
+                              </View>
+                              : <Text style={styles.text}>{item.name}</Text>
+                          }
+                        </View>
+                      </TouchableOpacity>
+                      : null
+                  )}
+                >
+                </FlatList>
+              </View>
+            </View>
+          )}
+        />
+        <NavBar />
       </LinearGradient>
     </View>
   );
