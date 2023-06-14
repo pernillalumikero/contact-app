@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 addSection: {
     flexDirection: 'row',
     columnGap: 40,
-    marginVertical: 10,
+    marginVertical: 15,
     backgroundColor: 'white',
     width: '90%',
     height: 60,
