@@ -4,10 +4,6 @@ import IconButton from './IconButton'
 
 export default function NavBar() {
 
-    const home = () => {
-        Alert.alert('Home, sweet home!')
-    }
-
   return (
     <View style={styles.nav}>
       <IconButton icon='home-sharp' color='white' size={35} />
