@@ -1,10 +1,10 @@
 import React from 'react'
-import { Alert, Text, View, TouchableOpacity, StyleSheet } from 'react-native'
+import { Alert, Text, View, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons';
 import AddContactInput from './AddContactInput';
 import AddButton from './AddButton';
 
-export default function AddContactSection({ setPressed, name, setName, number, setNumber, email, setEmail, contacts }) {
+export default function AddContactSection({ setPressed, name, setName, number, setNumber, email, setEmail, setImage, image, pickImage, contacts }) {
 
     const addFunction = () => {
 
@@ -38,14 +38,18 @@ export default function AddContactSection({ setPressed, name, setName, number, s
         setName('')
         setNumber(null)
         setEmail('')
+        setImage(null)
         setPressed(false)
     }
 
     return (
         <View style={styles.addNew}>
             <View>
-                <TouchableOpacity style={styles.picWrapper} onPress={() => Alert.alert('Funkar tyvärr inte ännu!')}>
-                    <FontAwesome name="user-circle-o" size={40} color="black" />
+                <TouchableOpacity style={styles.picWrapper} onPress={() => pickImage()}>
+                    {!image 
+                    ? <FontAwesome name="user-circle-o" size={40} color="black" />
+                    : <Image source={{uri: image}} style={styles.picture} />
+                    }
                     <Text style={styles.text}>Lägg till bild</Text>
                 </TouchableOpacity>
                 <View>
@@ -110,4 +114,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         columnGap: 30
     },
+
+    picture: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+      }
 })

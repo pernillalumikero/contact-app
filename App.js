@@ -1,11 +1,10 @@
 import { useCallback, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { FlatList, StyleSheet, Text, View, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useFonts } from 'expo-font';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as SplashScreen from 'expo-splash-screen'
+import * as ImagePicker from 'expo-image-picker'
 import { FontAwesome } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
-import { SimpleLineIcons } from '@expo/vector-icons';
 import AddContactButton from './assets/components/AddContactButton';
 import AddContactSection from './assets/components/AddContactSection';
 import Header from './assets/components/Header';
@@ -21,6 +20,7 @@ export default function App() {
   const [name, setName] = useState('')
   const [number, setNumber] = useState('')
   const [email, setEmail] = useState('')
+  const [image, setImage] = useState(null)
 
   const [contacts, setContacts] = useState([
     { id: 1, name: 'Jane Doe', number: '070 123 45 67', email: 'jane.doe@somemail.com', picture: require('./assets/images/michael-dam-mEZ3PoFGs_k-unsplash.jpg'), displayContent: false, favorite: true, updatePressed: false },
@@ -30,6 +30,16 @@ export default function App() {
     { id: 5, name: 'Janne Doe', number: '070 123 45 67', email: 'janne.doe@somemail.com', picture: require('./assets/images/vince-fleming-j3lf-Jn6deo-unsplash.jpg'), displayContent: false, favorite: false, updatePressed: false },
     { id: 6, name: 'Juna Doe', number: '070 123 45 67', email: 'juna.doe@somemail.com', picture: require('./assets/images/le-minh-phuong-jGZITdFhmts-unsplash.jpg'), displayContent: false, favorite: false, updatePressed: false },
   ])
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images
+    })
+
+    if(!result.canceled) {
+      setImage(result.assets[0].uri)
+    }
+  }
 
   const toggleContent = (id) => {
     setContacts(
@@ -136,6 +146,9 @@ export default function App() {
                 setNumber={setNumber}
                 email={email}
                 setEmail={setEmail}
+                setImage={setImage}
+                image={image}
+                pickImage={pickImage}
                 contacts={contacts} />}
             <View style={styles.wrapper2}>
               <Text style={styles.h2}>Favoriter</Text>
