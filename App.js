@@ -36,7 +36,7 @@ export default function App() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images
     })
 
-    if(!result.canceled) {
+    if (!result.canceled) {
       setImage(result.assets[0].uri)
     }
   }
@@ -130,39 +130,90 @@ export default function App() {
         colors={['#F3EFEB', '#6CB8A6']}
         style={styles.linearGradient}
       >
-        <ScrollView style={styles.scrollView}>
-          <View style={styles.content}>
-            <Header />
-            {/* check if add-button is clicked - default is set to false */}
-            {!pressed
-              //show only button if not clicked
-              ? <AddContactButton setPressed={setPressed} />
-              // if clicked show add section with input fields and buttons to add or cancel
-              : <AddContactSection
-                setPressed={setPressed}
-                name={name}
-                setName={setName}
-                number={number}
-                setNumber={setNumber}
-                email={email}
-                setEmail={setEmail}
-                setImage={setImage}
-                image={image}
-                pickImage={pickImage}
-                contacts={contacts} />}
-            <View style={styles.wrapper2}>
-              <Text style={styles.h2}>Favoriter</Text>
-              {/* render a list of favorite-contacts */}
-              <FlatList
-                data={contacts}
-                renderItem={({ item }) => (
-                  // check if contact is a favorite - if true add to the list
-                  item.favorite
-                    ? <TouchableOpacity
-                      // Let user hide/show more info about contact - default is false(hidden)
-                      onPress={() => toggleContent(item.id)}>
-                      <View style={styles.section2}>
-                        {item.displayContent
+        <View style={styles.headerWrapper}>
+          <Header />
+          {/* check if add-button is clicked - default is set to false */}
+          {!pressed
+            //show only button if not clicked
+            ? <AddContactButton setPressed={setPressed} />
+            // if clicked show add section with input fields and buttons to add or cancel
+            : <AddContactSection
+              setPressed={setPressed}
+              name={name}
+              setName={setName}
+              number={number}
+              setNumber={setNumber}
+              email={email}
+              setEmail={setEmail}
+              setImage={setImage}
+              image={image}
+              pickImage={pickImage}
+              contacts={contacts} />}
+        </View>
+        <FlatList
+          data={[1]}
+          renderItem={() => (
+        <View style={styles.content}>
+          <View style={styles.wrapper2}>
+            <Text style={styles.h2}>Favoriter</Text>
+            {/* render a list of favorite-contacts */}
+            <FlatList
+              data={contacts}
+              renderItem={({ item }) => (
+                // check if contact is a favorite - if true add to the list
+                item.favorite
+                  ? <TouchableOpacity
+                    // Let user hide/show more info about contact - default is false(hidden)
+                    onPress={() => toggleContent(item.id)}>
+                    <View style={styles.section}>
+                      {item.displayContent
+                        ? <View style={styles.article}>
+                          {item.picture
+                            ? <Image
+                              source={item.picture}
+                              style={styles.picture}
+                            ></Image>
+                            : <FontAwesome name="user-circle-o" size={100} color="black" />}
+                          {/* let user update contact info - show input fields in click - default is false */}
+                          {!item.updatePressed
+                            ? <DefaultContactLayout
+                              toggleFavorite={toggleFavorite}
+                              updateFunction={updateFunction}
+                              deleteFunction={deleteFunction}
+                              item={item}
+                              favorite="star-sharp" />
+                            : <UpdateContactLayout
+                              setName={setName}
+                              setNumber={setNumber}
+                              setEmail={setEmail}
+                              item={item}
+                              doneFunction={doneFunction}
+                              updateFunction={updateFunction}
+                              deleteFunction={deleteFunction} />
+                          }
+                        </View>
+                        // if contact info is hidden, only show contact name
+                        : <Text style={styles.text}>{item.name}</Text>
+                      }
+                    </View>
+                  </TouchableOpacity>
+                  : null
+              )}
+            >
+            </FlatList>
+          </View>
+          <View style={styles.wrapper2}>
+            <Text style={styles.h2}>Nyligen tillagda</Text>
+            <FlatList
+              data={contacts}
+              style={styles.list}
+              renderItem={({ item }) => (
+                !item.favorite
+                  ? <TouchableOpacity
+                    onPress={() => toggleContent(item.id)}>
+                    <View style={styles.section}>
+                      {
+                        item.displayContent
                           ? <View style={styles.article}>
                             {item.picture
                               ? <Image
@@ -170,14 +221,13 @@ export default function App() {
                                 style={styles.picture}
                               ></Image>
                               : <FontAwesome name="user-circle-o" size={100} color="black" />}
-                              {/* let user update contact info - show input fields in click - default is false */}
                             {!item.updatePressed
                               ? <DefaultContactLayout
                                 toggleFavorite={toggleFavorite}
                                 updateFunction={updateFunction}
                                 deleteFunction={deleteFunction}
                                 item={item}
-                                favorite="star-sharp" />
+                                favorite='star-outline' />
                               : <UpdateContactLayout
                                 setName={setName}
                                 setNumber={setNumber}
@@ -188,74 +238,38 @@ export default function App() {
                                 deleteFunction={deleteFunction} />
                             }
                           </View>
-                          // if contact info is hidden, only show contact name
                           : <Text style={styles.text}>{item.name}</Text>
-                        }
-                      </View>
-                    </TouchableOpacity>
-                    : null
-                )}
-              >
-              </FlatList>
-            </View>
-            <View style={styles.wrapper2}>
-              <Text style={styles.h2}>Nyligen tillagda</Text>
-              <FlatList
-                data={contacts}
-                style={styles.list}
-                renderItem={({ item }) => (
-                  !item.favorite
-                    ? <TouchableOpacity
-                      onPress={() => toggleContent(item.id)}>
-                      <View style={styles.section2}>
-                        {
-                          item.displayContent
-                            ? <View style={styles.article}>
-                              {item.picture
-                                ? <Image
-                                  source={item.picture}
-                                  style={styles.picture}
-                                ></Image>
-                                : <FontAwesome name="user-circle-o" size={100} color="black" />}
-                              {!item.updatePressed
-                                ? <DefaultContactLayout
-                                  toggleFavorite={toggleFavorite}
-                                  updateFunction={updateFunction}
-                                  deleteFunction={deleteFunction}
-                                  item={item}
-                                  favorite='star-outline' />
-                                : <UpdateContactLayout
-                                  setName={setName}
-                                  setNumber={setNumber}
-                                  setEmail={setEmail}
-                                  item={item}
-                                  doneFunction={doneFunction}
-                                  updateFunction={updateFunction}
-                                  deleteFunction={deleteFunction} />
-                              }
-                            </View>
-                            : <Text style={styles.text}>{item.name}</Text>
-                        }
-                      </View>
-                    </TouchableOpacity>
-                    : null
-                )}
-              >
-              </FlatList>
-            </View>
+                      }
+                    </View>
+                  </TouchableOpacity>
+                  : null
+              )}
+            >
+            </FlatList>
           </View>
-        </ScrollView>
+        </View>
+            )}
+            />
       </LinearGradient>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+
   container: {
     flex: 1,
   },
 
+  linearGradient: {
+    flex: 1,
+  },
+
   content: {
+    alignItems: 'center'
+  },
+
+  headerWrapper: {
     alignItems: 'center'
   },
 
@@ -266,8 +280,9 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
 
-  wrapper3: {
-    backgroundColor: 'blue'
+  wrapper2: {
+    flex: 1,
+    width: '90%',
   },
 
   iconWrapper: {
@@ -277,38 +292,7 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
 
-  h2: {
-    fontFamily: 'Montserrat-Bold',
-    fontSize: 18,
-    margin: 20,
-  },
-
-  linearGradient: {
-    flex: 1,
-  },
-
   section: {
-    flex: 1,
-    flexDirection: 'row',
-    columnGap: 40,
-    marginVertical: 10,
-    backgroundColor: 'white',
-    width: '100%',
-    height: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4,
-  },
-
-  section2: {
     flexDirection: 'row',
     columnGap: 40,
     marginVertical: 10,
@@ -333,6 +317,12 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
 
+  h2: {
+    fontFamily: 'Montserrat-Bold',
+    fontSize: 18,
+    margin: 20,
+  },
+
   input: {
     fontFamily: 'Montserrat-Regular',
     borderBottomColor: 'black',
@@ -341,11 +331,6 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: 'Montserrat-Regular',
     marginVertical: 10,
-  },
-
-  wrapper2: {
-    flex: 1,
-    width: '90%',
   },
 
   picture: {
