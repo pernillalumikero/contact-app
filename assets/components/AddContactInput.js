@@ -27,6 +27,9 @@ const styles = StyleSheet.create({
 
     input: {
         fontFamily: 'Montserrat-Regular',
+        marginVertical: 10,
         borderBottomColor: 'black',
+        borderBottomWidth: 1,
+        padding: 5
     },
 })

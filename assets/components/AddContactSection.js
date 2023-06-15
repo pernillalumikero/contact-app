@@ -9,11 +9,11 @@ export default function AddContactSection({ setPressed, name, setName, number, s
     const addFunction = () => {
 
         if(name === '') {
-           return Alert.alert('Lägg till ett namn')
+           return Alert.alert('Felmeddelande', 'Lägg till ett namn')
         }
 
         if (number === '' && email === '') {
-            return  Alert.alert('Lägg till en kontaktuppgift')
+            return  Alert.alert('Felmeddelande', 'Lägg till en kontaktuppgift')
         }
 
         const createNewId = () => {
